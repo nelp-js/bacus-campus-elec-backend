@@ -1,0 +1,12 @@
+model Student {
+    studentId String @id @unique
+    email String
+    name String
+    department String
+
+    Candidate Candidates[]
+
+    createdAt DateTime @default(now())
+
+    @@index ([studentId])
+}
