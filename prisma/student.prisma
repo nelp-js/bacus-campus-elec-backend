@@ -5,6 +5,7 @@ model Student {
     department String
 
     Candidate Candidates[]
+    Voters Vote[]
 
     createdAt DateTime @default(now())
 
