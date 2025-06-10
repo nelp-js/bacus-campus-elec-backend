@@ -22,10 +22,12 @@ model Election {
 
     startDate DateTime
     endDate DateTime
-    isActice Boolean @default(true)
+    isActive Boolean @default(true)
     createdAt DateTime @default(now())
+    notes String?
 
     Votes Vote[]
+    Positions Position[]
 
-    @@index([isActice])
+    @@index([isActive])
 }

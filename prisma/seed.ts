@@ -1,19 +1,36 @@
 import { PrismaClient } from "@prisma/client";
+import { connect } from "http2";
 
 const prisma = new PrismaClient();
+const PRESIDENT25_ID = "election-2025-president"
 
 async function seedElection() {
     const election25 = await prisma.election.upsert({
         where: {id: 'election-25'},
         update: {},
         create: {
-            id: 'election-2025',
-            name: 'election-2025',
+            id: 'election-25',
+            name: 'election-25',
             startDate: new Date('2025-05-26T00:00:00Z'),
-            endDate: new Date('2025-06-26T59:59:59Z'),
+            endDate: new Date('2025-06-26T23:59:59Z'),
             desciption: 'University Student Council Election 2025',
-            isActice: true
+            isActive: true
             }
+        }
+    )
+
+    await prisma.position.upsert({
+        where: {id: PRESIDENT25_ID},
+        update: {},
+        create: {
+            id: PRESIDENT25_ID,
+            title: "president",
+            Election: {
+                connect: {
+                    id: election25.id
+                }
+            }
+        }
         }
     )
 }
@@ -22,4 +39,10 @@ async function seedElection() {
 
 async function main() {
     console.log("SEEDING DATABASE...");  
+
+    await seedElection();
+
+    console.log("FINISH SEEDING");
 }
+
+void main()
