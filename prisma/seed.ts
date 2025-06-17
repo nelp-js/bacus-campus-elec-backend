@@ -36,11 +36,76 @@ async function seedElection() {
 }
 
 
+async function seedStudents() {
+  const students = [
+    {
+      studentId: "20250001",
+      email: "atbacus2@addu.edu.ph",
+      name: "Ainel Bacus",
+      department: "Computer Science",
+    },
+    {
+      studentId: "20250002",
+      email: "hydnakagawa@addu.edu.ph",
+      name: "Honeydei Yssabelle Nakagawa",
+      department: "Information Technology",
+    },
+    {
+      studentId: "20250003",
+      email: "aalboncato@addu.edu.ph",
+      name: "Alvin Angelo Boncato",
+      department: "Engineering",
+    },
+  ]
+
+  for (const student of students) {
+    await prisma.student.upsert({
+      where: { studentId: student.studentId },
+      update: {},
+      create: student,
+    })
+  }
+}
+
+async function seedCandidates() {
+  const ainel = await prisma.student.findFirst({
+    where: { email: "atbacus2@addu.edu.ph" },
+  })
+
+  const honeydei = await prisma.student.findFirst({
+    where: { email: "hydnakagawa@addu.edu.ph" },
+  })
+
+  if (!ainel || !honeydei) {
+    console.error("One or more students not found.")
+    return
+  }
+
+  const candidates = [
+    {
+      studentId: ainel.studentId,
+      positionId: PRESIDENT25_ID,
+    },
+    {
+      studentId: honeydei.studentId,
+      positionId: PRESIDENT25_ID,
+    },
+  ]
+
+  for (const candidate of candidates) {
+    await prisma.candidates.create({
+      data: candidate,
+    })
+  }
+}
+
 
 async function main() {
     console.log("SEEDING DATABASE...");  
 
     await seedElection();
+    await seedStudents();
+    await seedCandidates();
 
     console.log("FINISH SEEDING");
 }
