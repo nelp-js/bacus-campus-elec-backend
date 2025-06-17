@@ -35,34 +35,38 @@ async function seedElection() {
     )
 }
 
+function generateStudentId(): string {
+  const num = Math.floor(Math.random() * 1_000_000).toString().padStart(6, "0")
+  return `AdDU${num}`
+}
 
 async function seedStudents() {
-  const students = [
+  const rawStudents = [
     {
-      studentId: "20250001",
       email: "atbacus2@addu.edu.ph",
       name: "Ainel Bacus",
       department: "Computer Science",
     },
     {
-      studentId: "20250002",
       email: "hydnakagawa@addu.edu.ph",
       name: "Honeydei Yssabelle Nakagawa",
       department: "Information Technology",
     },
     {
-      studentId: "20250003",
       email: "aalboncato@addu.edu.ph",
       name: "Alvin Angelo Boncato",
       department: "Engineering",
     },
   ]
 
-  for (const student of students) {
+  for (const s of rawStudents) {
     await prisma.student.upsert({
-      where: { studentId: student.studentId },
-      update: {},
-      create: student,
+      where: { studentId: `dummy-${s.email}` },  
+      update: {}, 
+      create: {
+        ...s,
+        studentId: generateStudentId(),
+      },
     })
   }
 }
