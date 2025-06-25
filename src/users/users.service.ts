@@ -1,27 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service'
-import { Student } from '@prisma/client'
-import { NotFoundException } from '@nestjs/common'
-
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService} from 'src/prisma.service'
+import { Student } from '@prisma/client';
+import { CreateStudentDto } from 'src/users/dto/createstudent.dto';
 @Injectable()
 export class UsersService {
-    constructor (private prisma: PrismaService){}
+    constructor(private prisma: PrismaService){}
 
+/**
+ * Retrieves all students from the db.
+ * @returns A promise that resolves to an array
+ *  of Student objects
+ */
 
-   /**
-    *  retrieves all students from db
-    * @returns - A promise that resolves to an array of student objects.
-    */ 
-    async findAllStudents(): Promise<Student[]> {
-        return await this.prisma.student.findMany();
+    async findAllStudents():Promise<Student[]> {
+        return this.prisma.student.findMany();
     }
-
     /**
-     * Retrieves a student bty thier ID from the database.
-     * 
+     * Retrieves a student by their ID from the database
      * @returns 
      */
-    async findStudentById({ id }: {id: Student['studentId']}): Promise<Student>{
+    async findStudentById({ id }: {id: Student['studentId']}): Promise<Student> {
         const student = await this.prisma.student.findUnique({
             where: {
                 studentId: id
@@ -29,11 +27,20 @@ export class UsersService {
         })
 
         if (!student) {
-            //Use NotFoundException for HTTP handling
+            // Use NotFoundException for proper HTTP handling
             // @see @nest/common
             throw new NotFoundException('Student not found.')
         }
 
         return student;
+    }
+
+        /**
+     * Creates a new student 
+     */
+    async createStudent(data: CreateStudentDto): Promise<Student> {
+        return this.prisma.student.create({
+            data,
+        });
     }
 }
